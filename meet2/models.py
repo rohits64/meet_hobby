@@ -1,16 +1,28 @@
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+from django.contrib.auth.models import User
 
-class User(models.Model):
-    UserId = models.AutoField(primary_key=True)
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     UserName = models.CharField(max_length=60)
-    EmailId = models.CharField(max_length=60)
     AddressRoomNo = models.CharField(max_length=60)
     AddressHall = models.CharField(max_length=60)
 
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()
+
+
 class PhoneNumber(models.Model):
-    UserId = models.ForeignKey('User',on_delete=models.CASCADE)
+    UserId = models.ForeignKey('Profile',on_delete=models.CASCADE)
     PhoneNumber = models.CharField(max_length=60)
 
 
@@ -20,7 +32,7 @@ class Post(models.Model):
     PostDescription = models.TextField()
     PostTime = models.DateTimeField(blank=True, null=True)
     PostCreationTime = models.DateTimeField(default=timezone.now)
-    UserId = models.ForeignKey('User',on_delete=models.CASCADE)
+    UserId = models.ForeignKey('Profile',on_delete=models.CASCADE)
 
     def publish(self):
         self.PostTime = timezone.now()
@@ -30,7 +42,7 @@ class Post(models.Model):
 class Comments(models.Model):
     CommentId = models.AutoField(primary_key=True)
     PostId = models.ForeignKey('Post',on_delete=models.CASCADE)
-    UserId = models.ForeignKey('User',on_delete=models.CASCADE)
+    UserId = models.ForeignKey('Profile',on_delete=models.CASCADE)
     Content = models.TextField()
     CommentTime = models.DateTimeField(blank=True, null=True)
 
@@ -72,13 +84,13 @@ class HasPosts(models.Model):
 
 class UserInterestedEvents(models.Model):
     EventId = models.ForeignKey('Events',on_delete=models.CASCADE)
-    UserId = models.ForeignKey('User',on_delete=models.CASCADE)
+    UserId = models.ForeignKey('Profile',on_delete=models.CASCADE)
     EntryTime = models.DateTimeField(blank=True, null=True)
     ExitTime = models.DateTimeField(blank=True, null=True)
     Organiser = models.CharField(max_length=60)
 
 class GroupMembers(models.Model):
-    UserId = models.ForeignKey('User',on_delete=models.CASCADE)
+    UserId = models.ForeignKey('Profile',on_delete=models.CASCADE)
     GroupId = models.ForeignKey('Group',on_delete=models.CASCADE)
     Moderator = models.BooleanField(default=False)
     NoofPosts = models.PositiveIntegerField(default=0)
