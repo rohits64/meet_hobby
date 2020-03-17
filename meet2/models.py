@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     UserName = models.CharField(max_length=60)
+    # email = models.EmailField(default="abc@gmail.com",max_length=200,null=False)
     AddressRoomNo = models.CharField(max_length=60)
     AddressHall = models.CharField(max_length=60)
 
