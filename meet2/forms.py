@@ -13,6 +13,8 @@ class SignUpForm(UserCreationForm):
 class ProfileForm(forms.Form):
     AddressRoomNo = forms.CharField(max_length=60)
     AddressHall = forms.CharField(max_length=60)
+
+    
         
 
         

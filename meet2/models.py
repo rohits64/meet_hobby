@@ -23,15 +23,17 @@ class Profile(models.Model):
 #     instance.profile.save()
 
 @receiver(post_save, sender=User)
-def updaet_profile_signal(sender, instance, created, **kwargs):
+def update_profile_signal(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
     instance.profile.save()    
 
 class PhoneNumber(models.Model):
-    UserId = models.ForeignKey('Profile',on_delete=models.CASCADE)
+    UserId = models.ForeignKey(User,on_delete=models.CASCADE)
     PhoneNumber = models.CharField(max_length=60)
 
+    def __str__(self):
+        return self.PhoneNumber
 
 class Post(models.Model):
     PostId = models.AutoField(primary_key=True)
@@ -39,17 +41,17 @@ class Post(models.Model):
     PostDescription = models.TextField()
     PostTime = models.DateTimeField(blank=True, null=True)
     PostCreationTime = models.DateTimeField(default=timezone.now)
-    UserId = models.ForeignKey('Profile',on_delete=models.CASCADE)
+    UserId = models.ForeignKey(User,on_delete=models.CASCADE)
 
     def publish(self):
         self.PostTime = timezone.now()
-        self.save()
+        self.save()    
 
 
 class Comments(models.Model):
     CommentId = models.AutoField(primary_key=True)
     PostId = models.ForeignKey('Post',on_delete=models.CASCADE)
-    UserId = models.ForeignKey('Profile',on_delete=models.CASCADE)
+    UserId = models.ForeignKey(User,on_delete=models.CASCADE)
     Content = models.TextField()
     CommentTime = models.DateTimeField(blank=True, null=True)
 
@@ -67,6 +69,9 @@ class Group(models.Model):
         self.GroupCreationTime = timezone.now()
         self.save()
 
+    def __str__(self):
+        return self.GroupName    
+
 class Events(models.Model):
     EventId = models.AutoField(primary_key=True)
     DateTime = models.DateTimeField(blank=True, null=True)
@@ -79,6 +84,8 @@ class Events(models.Model):
         self.EventCreationTime = timezone.now()
         self.save()
 
+    def __str__(self):
+        return self.EventName
 
 class HasEvents(models.Model):
     EventId = models.ForeignKey('Events',on_delete=models.CASCADE)
@@ -91,14 +98,16 @@ class HasPosts(models.Model):
 
 class UserInterestedEvents(models.Model):
     EventId = models.ForeignKey('Events',on_delete=models.CASCADE)
-    UserId = models.ForeignKey('Profile',on_delete=models.CASCADE)
+    UserId = models.ForeignKey(User,on_delete=models.CASCADE)
     EntryTime = models.DateTimeField(blank=True, null=True)
     ExitTime = models.DateTimeField(blank=True, null=True)
     Organiser = models.CharField(max_length=60)
 
 class GroupMembers(models.Model):
-    UserId = models.ForeignKey('Profile',on_delete=models.CASCADE)
+    UserId = models.ForeignKey(User,on_delete=models.CASCADE)
     GroupId = models.ForeignKey('Group',on_delete=models.CASCADE)
     Moderator = models.BooleanField(default=False)
     NoofPosts = models.PositiveIntegerField(default=0)
     NoofEvents = models.PositiveIntegerField(default=0)
+
+

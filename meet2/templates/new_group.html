@@ -1,0 +1,29 @@
+<a href="/profile"> Profile </a>
+
+{% if  new_groups %}
+    {% for gp in new_groups %}
+        <p>
+             {{ gp.GroupId }}
+                <br> <br>
+        </p>
+
+        <p>
+                {{ gp.GroupName }}
+        </p> <br> <br>
+
+        <p>
+                {{ gp.GroupDescription }}
+        </p>
+
+
+        <br> <br>
+
+        <p>
+            <form method="post" action="{% url 'join_group' gp.GroupId %}"> 
+                {% csrf_token %}
+                <br>
+                <button> Join Group </button>
+            </form>
+        </p>
+    {% endfor %}
+{% endif %}
