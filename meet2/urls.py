@@ -9,5 +9,7 @@ urlpatterns = [
     path('profile/', views.index,name='index'),
     path('showgroup/', views.show_joined_group, name='show_joined_group'),
     path('newgroup/', views.show_new_group, name='show_new_group'),
-    path('newgroup/<int:id>', views.join_group, name='join_group')
+    path('newgroup/<int:id>', views.join_group, name='join_group'),
+    path('group_posts/<int:id>',views.show_posts, name='show_posts'),
+    path('new_post/<int:id>',views.new_post,name='post_new')
 ]

@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from .models import Post
 
 class SignUpForm(UserCreationForm):
     username = forms.CharField(max_length=60, help_text='Username')
@@ -14,6 +15,11 @@ class ProfileForm(forms.Form):
     AddressRoomNo = forms.CharField(max_length=60)
     AddressHall = forms.CharField(max_length=60)
 
+class PostForm(forms.ModelForm):
+
+    class Meta:
+        model = Post
+        fields = ('PostDescription',)
     
         
 
