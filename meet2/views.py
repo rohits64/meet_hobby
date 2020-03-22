@@ -65,4 +65,51 @@ def index(request):
         return render(request, 'index.html')
     else:
         messages.warning(request, 'You are not logged in. Please login') 
-        return redirect('home')                               
+        return redirect('home')  
+
+def show_joined_group(request):
+    user = request.user                                     
+    GM = GroupMembers.objects.filter(UserId=user)
+
+    user_groups = []
+    for x in GM:
+        user_groups.append(x.GroupId)
+    return render(request, 'show_group.html', {'user_groups':user_groups})
+
+def show_new_group(request):
+    user = request.user
+
+    GM = GroupMembers.objects.filter(UserId=user)
+
+    user_groups = []
+    for x in GM:
+        user_groups.append(x.GroupId)
+
+    all_groups = Group.objects.all()
+
+    new_groups = []
+
+    for group in all_groups:
+        if group not in user_groups:
+            new_groups.append(group)
+    print(new_groups)        
+
+    return render(request, 'new_group.html', {'new_groups':new_groups})
+
+def join_group(request, id):
+    user = request.user   
+    if user.username:
+        cur_group = Group.objects.get(GroupId = id)
+
+        new_member = GroupMembers()
+        new_member.GroupId = cur_group
+        new_member.UserId = user
+        new_member.save()
+
+
+        return redirect(show_joined_group)
+    else:
+        messages.warning(request, 'You are not logged in. Please login')
+        return redirect('home')    
+
+    

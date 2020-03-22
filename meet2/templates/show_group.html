@@ -1,0 +1,14 @@
+<a href="/profile"> Profile </a>
+
+{% if  user_groups %}
+    {% for gp in user_groups %}
+        <p>
+                {{ gp.GroupName }}
+        </p> <br> <br>
+
+        <p>
+                {{ gp.GroupDescription }}
+        </p>
+
+    {% endfor %}
+{% endif %}
