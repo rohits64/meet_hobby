@@ -112,4 +112,44 @@ def join_group(request, id):
         messages.warning(request, 'You are not logged in. Please login')
         return redirect('home')    
 
+def new_post(request, id):
+    if request.method =="POST":
+        form = PostForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit = False)
+            post.UserId = request.user
+            post.save()
+            pid = post.PostId
+            new_post_rel = HasPosts()
+            new_post_rel.GroupId = Group.objects.get(GroupId = id)
+            new_post_rel.PostId = Post.objects.get(PostId = pid)
+            new_post_rel.save()
+            return redirect(show_posts,id)
+        
+    else:
+        form = PostForm()
+    return render(request,'new_post.html',{'new_post_form':PostForm})
+    # user = request.user
+    # if user.username:
+
+
+def show_posts(request, id):
+    HP = HasPosts.objects.filter(GroupId = id)
+    all_posts = Post.objects.all()
+    has_post = []
+    for x in all_posts:
+        for y in HP:
+            # print(x.PostId)
+            # print(y.PostId.PostId)
+            if x.PostId == y.PostId.PostId :
+                has_post.append(x)
+        # has_post.append(x.PostId)
+    # return redirect(request, 'group_posts.html',{'gposts':gposts})
+    print(HP)
+    print(has_post)
+    print(all_posts)
+    return render(request, 'group_posts.html',{'hps':has_post,'gid':id})
+
+
+
     
