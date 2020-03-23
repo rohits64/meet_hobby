@@ -3,15 +3,14 @@
 {% if  user_groups %}
     {% for gp in user_groups %}
         <p>
-                {{ gp.GroupName }}
-        </p> <br> <br>
-
-        <p>
+              <a href="/group_posts/{{gp.GroupId}}">  {{ gp.GroupName }} </a>
+              <br>
                 {{ gp.GroupDescription }}
         </p>
-        <p>
+        <br>
+        <!-- <p>
             {{ gp.GroupId }}
-    </p>
+    </p> -->
         
 
     {% endfor %}
