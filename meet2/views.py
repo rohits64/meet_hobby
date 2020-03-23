@@ -129,8 +129,6 @@ def new_post(request, id):
     else:
         form = PostForm()
     return render(request,'new_post.html',{'new_post_form':PostForm})
-    # user = request.user
-    # if user.username:
 
 
 def show_posts(request, id):
@@ -139,16 +137,30 @@ def show_posts(request, id):
     has_post = []
     for x in all_posts:
         for y in HP:
-            # print(x.PostId)
-            # print(y.PostId.PostId)
             if x.PostId == y.PostId.PostId :
                 has_post.append(x)
-        # has_post.append(x.PostId)
-    # return redirect(request, 'group_posts.html',{'gposts':gposts})
     print(HP)
     print(has_post)
     print(all_posts)
     return render(request, 'group_posts.html',{'hps':has_post,'gid':id})
+
+def new_comment(request,id):
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comments = form.save(commit = False)
+            comments.UserId = request.user
+            comments.PostId = Post.objects.get(PostId = id)
+            comments.save()
+            return redirect(show_comments,id)
+    else:
+        form = CommentForm()
+    return render(request,'new_comment.html',{'new_comment_form':CommentForm})
+
+def show_comments(request, id):
+    HC = Comments.objects.filter(PostId = id)
+    print(HC)
+    return render(request, 'post_comments.html',{'hcs':HC,'pid':id})
 
 
 
